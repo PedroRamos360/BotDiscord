@@ -56,4 +56,4 @@ async def date(context):
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     await context.channel.send(dt_string)
 
-client.run('MTA1MjI2NDg5ODA1MjIzNTI5NQ.GtGrps.XLoAnGD1ZOOcbnDZyiQr4MpvG_2X7kKtqJBLgQ')
+client.run('não tem código aqui')
