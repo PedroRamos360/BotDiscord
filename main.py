@@ -30,7 +30,7 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    # await message.channel.send("%contador")
+    # await message.channel.send("/contador")
 
     await client.process_commands(message)
 
@@ -44,11 +44,13 @@ async def oi(context, *nome):
 
 @client.command()
 async def contador(context):
-    usuario = context.author
-    counter = load_pickle(0, 'counter-{}'.format(usuario))
-    counter += 1
-    save_pickle(counter, 'counter-{}'.format(usuario))
-    await context.channel.send("Usuario " + str(usuario) + ": " + str(counter))
+    d = load_pickle({}, 'd')
+    if context.author.id in d:
+        d[context.author.id] += 1
+    else:
+        d[context.author.id] = 0
+    save_pickle(d, 'd')
+    await context.channel.send("Usuario " + str(context.author) + ": " + str(d[context.author.id]))
 
 @client.command()
 async def date(context):
@@ -56,4 +58,4 @@ async def date(context):
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     await context.channel.send(dt_string)
 
-client.run('não tem código aqui')
+client.run('sem token')
