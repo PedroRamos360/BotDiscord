@@ -30,7 +30,24 @@ async def on_message(message):
     if message.author == client.user:
         return
     
-    # await message.channel.send("/contador")
+    if not message.author.bot:
+        messages = load_pickle(0, "messages")
+        messages += 1
+        save_pickle(messages, "messages")
+        messages_user = load_pickle({}, "messages_user")
+
+        if message.author.id in messages_user:
+            messages_user[message.author.id] += 1
+        else:
+            messages_user[message.author.id] = 1
+
+        save_pickle(messages_user, "messages_user")
+        
+        # await message.channel.send("Total de mensages: " + str(messages) + "\n"
+        #     "Mensages do usuário " + str(message.author) + ": " + str(messages_user[message.author.id])
+        # )
+    
+
 
     await client.process_commands(message)
 
@@ -58,4 +75,17 @@ async def date(context):
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
     await context.channel.send(dt_string)
 
-client.run('sem token')
+@client.command()
+async def rank(context):
+    messages_user = load_pickle({}, "messages_user")
+    i = 0
+    messages_user = {k: v for k, v in sorted(messages_user.items(), key=lambda item: item[1],reverse=True)}
+    mensagem_final = ""
+    for user in messages_user:
+        if i > 10: break
+        mensagem_final += "<@" + str(user) + ">: " + str(messages_user[user]) + "\n"
+        i += 1
+
+    await context.channel.send(mensagem_final)
+
+client.run('meu token')
