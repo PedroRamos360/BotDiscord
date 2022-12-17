@@ -24,6 +24,21 @@ client = commands.Bot(intents=discord.Intents.all(), command_prefix='++')
 async def on_ready():
     print(f'Logado com sucesso como {client.user}')
 
+@client.event
+async def on_voice_state_update(member, state_before, state_after):
+    channel = client.get_channel(1051004621264523358)
+
+    if not state_before.channel and state_after.channel:
+        await channel.send(str(member) + " entrou no canal de voz " + str(state_after.channel))
+    elif state_before.channel and not state_after.channel:
+        await channel.send(str(member) + " saiu do canal de voz " + str(state_before.channel))
+    elif state_before.self_mute != state_after.self_mute:
+       await channel.send(str(member) + " se mutou!") if state_after.self_mute else await channel.send(str(member) + " se desmutou!")
+    elif state_before.self_video != state_after.self_video:
+       await channel.send(str(member) + " abriu a câmera!") if state_after.self_video else await channel.send(str(member) + " fechou a câmera!")
+    elif not state_before.self_stream and state_after.self_stream:
+       await channel.send(str(member) + " iniciou um stream!")
+
 
 @client.event
 async def on_message(message):
@@ -42,12 +57,6 @@ async def on_message(message):
             messages_user[message.author.id] = 1
 
         save_pickle(messages_user, "messages_user")
-        
-        # await message.channel.send("Total de mensages: " + str(messages) + "\n"
-        #     "Mensages do usuário " + str(message.author) + ": " + str(messages_user[message.author.id])
-        # )
-    
-
 
     await client.process_commands(message)
 
